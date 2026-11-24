@@ -13,7 +13,8 @@
     <meta property="og:title" content="Studio Rebeca Cristina">
     <meta property="og:description" content="Manicure e pedicure em Salvador. Agende seu horário online!">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="img/compartilhar.jpg">
+    <meta property="og:image" content="https://lizandro-bembem.github.io/studio-rebeca-cristina/img/compartilhar.jpg">
+    <meta property="og:url" content="https://lizandro-bembem.github.io/studio-rebeca-cristina/">
 
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,10 +27,12 @@
 <!-- ============ PRELOADER ============ -->
 <div class="preloader" id="preloader" aria-hidden="true">
     <div class="preloader__inner">
-        <svg class="preloader__mono" viewBox="0 0 120 120">
-            <circle class="preloader__ring" cx="60" cy="60" r="56"/>
-            <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle">RC</text>
-        </svg>
+        <div class="preloader__logo">
+            <svg class="preloader__mono" viewBox="0 0 120 120">
+                <circle class="preloader__ring" cx="60" cy="60" r="56"/>
+            </svg>
+            <span class="mark preloader__mark"></span>
+        </div>
         <p class="preloader__name">Studio Rebeca Cristina</p>
     </div>
 </div>
@@ -44,7 +47,7 @@
 <header class="header" id="header">
     <div class="container header__inner">
         <a href="#inicio" class="logo" aria-label="Studio Rebeca Cristina - início">
-            <span class="logo__mono">RC</span>
+            <span class="logo__mono"><span class="mark"></span></span>
             <span class="logo__text">Studio<strong>Rebeca Cristina</strong></span>
         </a>
 
@@ -126,7 +129,7 @@
                         <defs><path id="circlePath" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
                         <text><textPath href="#circlePath" textLength="488" lengthAdjust="spacing">AGENDE SEU HORÁRIO • STUDIO REBECA CRISTINA • </textPath></text>
                     </svg>
-                    <span class="hero__badge-mono">RC</span>
+                    <span class="hero__badge-mono mark"></span>
                 </div>
                 <div class="hero__card float">
                     <span class="hero__card-dot"></span>
@@ -291,19 +294,20 @@
 
             <!--
               COMO TROCAR AS FOTOS DA GALERIA:
-              Coloque as fotos na pasta img/ com os nomes galeria-01.jpg, galeria-02.jpg ... galeria-12.jpg
+              Coloque as fotos na pasta img/ com os nomes galeria-01.jpg, galeria-02.jpg ...
               (ou mude o nome no atributo data-img abaixo). data-cat="maos" ou data-cat="pes" define o filtro.
+              Formatos: g-item--tall = vertical (3:5), g-item--wide = horizontal (2:1), os demais = quadrados (1:1).
             -->
             <div class="gallery__grid" id="galleryGrid">
-                <figure class="g-item g-item--tall reveal" data-cat="maos"><div class="ph" data-img="img/galeria-01.jpg"></div><figcaption>Nude com anéis</figcaption></figure>
-                <figure class="g-item reveal" data-cat="pes"><div class="ph ph--b" data-img="img/galeria-02.jpg"></div><figcaption>Pé branquinho</figcaption></figure>
-                <figure class="g-item reveal" data-cat="maos"><div class="ph ph--c" data-img="img/galeria-03.jpg"></div><figcaption>Vermelho clássico</figcaption></figure>
-                <figure class="g-item g-item--wide reveal" data-cat="maos"><div class="ph ph--d" data-img="img/galeria-04.jpg"></div><figcaption>Amendoada nude</figcaption></figure>
-                <figure class="g-item reveal" data-cat="pes"><div class="ph ph--e" data-img="img/galeria-05.jpg"></div><figcaption>Francesinha nos pés</figcaption></figure>
-                <figure class="g-item g-item--tall reveal" data-cat="maos"><div class="ph ph--f" data-img="img/galeria-06.jpg"></div><figcaption>Baby boomer</figcaption></figure>
-                <figure class="g-item reveal" data-cat="pes"><div class="ph ph--g" data-img="img/galeria-07.jpg"></div><figcaption>Nude com brilho</figcaption></figure>
-                <figure class="g-item reveal" data-cat="maos"><div class="ph ph--h" data-img="img/galeria-08.jpg"></div><figcaption>Francesinha</figcaption></figure>
-                <figure class="g-item reveal" data-cat="pes"><div class="ph" data-img="img/galeria-09.jpg"></div><figcaption>Pedicure delicada</figcaption></figure>
+                <figure class="g-item g-item--tall reveal" data-cat="maos"><div class="ph" data-img="img/galeria-01.jpg"></div><figcaption>Tom chocolate</figcaption></figure>
+                <figure class="g-item reveal" data-cat="maos"><div class="ph ph--b" data-img="img/galeria-02.jpg"></div><figcaption>Nude com brilho</figcaption></figure>
+                <figure class="g-item reveal" data-cat="pes"><div class="ph ph--c" data-img="img/galeria-03.jpg"></div><figcaption>Pé branquinho</figcaption></figure>
+                <figure class="g-item g-item--wide reveal" data-cat="pes"><div class="ph ph--d" data-img="img/galeria-04.jpg"></div><figcaption>Francesinha nos pés</figcaption></figure>
+                <figure class="g-item reveal" data-cat="maos"><div class="ph ph--e" data-img="img/galeria-05.jpg"></div><figcaption>Vermelho clássico</figcaption></figure>
+                <figure class="g-item g-item--tall reveal" data-cat="pes"><div class="ph ph--f" data-img="img/galeria-06.jpg"></div><figcaption>Francesinha delicada</figcaption></figure>
+                <figure class="g-item reveal" data-cat="maos"><div class="ph ph--g" data-img="img/galeria-07.jpg"></div><figcaption>Francesinha colorida</figcaption></figure>
+                <figure class="g-item reveal" data-cat="pes"><div class="ph ph--h" data-img="img/galeria-08.jpg"></div><figcaption>Cutilagem caprichada</figcaption></figure>
+                <figure class="g-item reveal" data-cat="maos"><div class="ph" data-img="img/galeria-09.jpg"></div><figcaption>Vermelho amendoado</figcaption></figure>
             </div>
 
             <div class="gallery__cta reveal">
@@ -406,16 +410,16 @@
                         <div><small>Instagram</small><strong>@studiorebecacristina</strong></div>
                         <span class="ccard__arrow">↗</span>
                     </a>
-                    <a href="https://www.google.com/maps/search/?api=1&query=Setor+6%2C+caminho+55+casa+6%2C+Salvador+BA" target="_blank" rel="noopener" class="ccard reveal">
+                    <a href="https://maps.app.goo.gl/wPg7s7Lzf9Ao2rmP9" target="_blank" rel="noopener" class="ccard reveal">
                         <span class="ccard__icon"><svg viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-                        <div><small>Endereço</small><strong>Setor 6, Caminho 55, Casa 6 — Salvador, BA</strong></div>
+                        <div><small>Endereço</small><strong>Quadra A, Caminho 6 — Cajazeiras, Salvador, BA</strong></div>
                         <span class="ccard__arrow">↗</span>
                     </a>
                 </div>
 
                 <div class="map reveal-img">
                     <iframe title="Localização do Studio Rebeca Cristina"
-                            src="https://www.google.com/maps?q=Setor+6,+caminho+55+casa+6,+Salvador+BA&output=embed"
+                            src="https://www.google.com/maps?q=Quadra+A+Caminho+6+-+Cajazeiras,+Salvador+-+BA,+41341-760&output=embed"
                             loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
@@ -434,7 +438,7 @@
 <!-- ============ FOOTER ============ -->
 <footer class="footer">
     <div class="container footer__inner">
-        <a href="#inicio" class="logo logo--light"><span class="logo__mono">RC</span><span class="logo__text">Studio<strong>Rebeca Cristina</strong></span></a>
+        <a href="#inicio" class="logo logo--light"><span class="logo__mono"><span class="mark"></span></span><span class="logo__text">Studio<strong>Rebeca Cristina</strong></span></a>
         <p>© <span id="year"></span> Studio Rebeca Cristina · Salvador, BA</p>
         <div class="footer__social">
             <a href="https://instagram.com/Studiorebecacristina" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>

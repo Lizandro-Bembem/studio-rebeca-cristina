@@ -24,6 +24,7 @@
     --ease: cubic-bezier(.22, 1, .36, 1);
     --ease-in-out: cubic-bezier(.76, 0, .24, 1);
     --header-h: 84px;
+    --logo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='376 321 432 552'%3E%3Cpath d='M386,360 L401,370 L401,828 L386,817 Z M492,462 L570,544 L514,541 C509,541 506,545 506,550 L506,832 L492,817 Z M782,502 L798,508 L798,862 L782,850 Z M419,331 L560,331 C670,331 742,380 742,452 C742,525 690,565 622,586 L760,758 L760,824 L752,820 L550,587 C612,572 692,540 694,470 C696,400 640,347 580,346 L450,345 Z'/%3E%3C/svg%3E");
 }
 
 /* ---------- Reset ---------- */
@@ -131,8 +132,15 @@ em { font-style: italic; }
 }
 .preloader.is-done { clip-path: inset(0 0 100% 0); }
 .preloader__inner { text-align: center; }
-.preloader__mono { width: 110px; height: 110px; margin: 0 auto 22px; }
-.preloader__mono text { font-family: var(--serif); font-size: 44px; fill: var(--gold-2); letter-spacing: 2px; opacity: 0; animation: fadeIn .8s .3s forwards; }
+/* Logo (monograma) — desenhada como máscara, assume a cor do texto (color) */
+.mark {
+    display: block; background-color: currentColor;
+    -webkit-mask: var(--logo) center / contain no-repeat;
+    mask: var(--logo) center / contain no-repeat;
+}
+.preloader__logo { position: relative; width: 110px; height: 110px; margin: 0 auto 22px; }
+.preloader__mono { width: 100%; height: 100%; display: block; }
+.preloader__mark { position: absolute; inset: 26px 30px; color: var(--gold-2); opacity: 0; animation: fadeIn .8s .3s forwards; }
 .preloader__ring { fill: none; stroke: var(--gold-2); stroke-width: 1.2; stroke-dasharray: 352; stroke-dashoffset: 352; animation: draw 1.4s var(--ease) forwards; transform: rotate(-90deg); transform-origin: center; }
 .preloader__name { color: var(--cream); font-size: .75rem; letter-spacing: .4em; text-transform: uppercase; opacity: 0; animation: fadeUp .8s .6s var(--ease) forwards; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
@@ -176,6 +184,7 @@ em { font-style: italic; }
     border: 1px solid rgba(61,42,26,.35);
     transition: transform .8s var(--ease), background .4s, color .4s;
 }
+.logo__mono .mark { width: 46%; height: 58%; }
 .logo:hover .logo__mono { transform: rotate(360deg); background: var(--cocoa); color: var(--cream); }
 .logo__text { display: flex; flex-direction: column; line-height: 1.05; font-size: .66rem; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); }
 .logo__text strong { font-family: var(--serif); font-size: 1.28rem; letter-spacing: .02em; text-transform: none; font-weight: 500; color: var(--cocoa); }
@@ -254,9 +263,10 @@ body.menu-open .mmenu__foot { opacity: 1; }
 .ph--about2 { background-image: radial-gradient(90% 80% at 70% 20%, rgba(255,255,255,.7), transparent 60%), linear-gradient(150deg, #FFEDD7, #E7BC91); }
 .ph { position: relative; }
 .ph:not(.has-img)::after {
-    content: "RC"; position: absolute; inset: 0; display: grid; place-items: center;
-    font-family: var(--serif); font-size: clamp(2.5rem, 9vw, 6rem); letter-spacing: .05em;
-    color: rgba(255,255,255,.35); pointer-events: none;
+    content: ""; position: absolute; inset: 28% 30%; pointer-events: none;
+    background-color: rgba(255,255,255,.4);
+    -webkit-mask: var(--logo) center / contain no-repeat;
+    mask: var(--logo) center / contain no-repeat;
 }
 .ph.has-img { background-size: cover; background-position: center; }
 
@@ -318,7 +328,7 @@ body.is-ready .hero__meta { transition-delay: .55s; }
 body.is-ready .hero__badge { opacity: 1; transform: none; }
 .hero__badge-text { position: absolute; inset: 0; width: 100%; height: 100%; animation: spin 18s linear infinite; }
 .hero__badge-text text { font-size: 13.5px; letter-spacing: 0; fill: var(--gold-2); font-family: var(--sans); font-weight: 500; }
-.hero__badge-mono { font-family: var(--serif); font-size: 1.9rem; color: var(--cream); }
+.hero__badge-mono { width: 26%; height: 34%; color: var(--cream); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .hero__card {
@@ -439,7 +449,7 @@ body.is-ready .hero__card { opacity: 1; }
 .lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(36,24,14,.94); display: grid; grid-template-columns: auto 1fr auto; align-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s; }
 .lightbox.is-open { opacity: 1; visibility: visible; }
 .lightbox__stage { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.lightbox__img { width: min(80vw, 560px); aspect-ratio: 4/5; max-height: 78vh; border-radius: 18px; background-size: cover; background-position: center; transform: scale(.92); transition: transform .6s var(--ease); }
+.lightbox__img { width: min(80vw, 560px); aspect-ratio: 4/5; max-height: 78vh; border-radius: 18px; background-size: contain; background-repeat: no-repeat; background-position: center; transform: scale(.92); transition: transform .6s var(--ease); }
 .lightbox.is-open .lightbox__img { transform: none; }
 .lightbox__cap { color: var(--cream); font-family: var(--serif); font-size: 1.3rem; font-style: italic; }
 .lightbox__close { position: absolute; top: 18px; right: 22px; font-size: 2.4rem; color: var(--cream); line-height: 1; width: 50px; height: 50px; }
@@ -557,7 +567,7 @@ body.is-ready .hero__card { opacity: 1; }
 
 /* ---------- CTA final ---------- */
 .final { padding: clamp(80px, 12vw, 140px) 0; background: linear-gradient(160deg, var(--nude), var(--rose)); text-align: center; position: relative; overflow: hidden; }
-.final::before { content: "RC"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-family: var(--serif); font-size: clamp(14rem, 40vw, 30rem); line-height: 1; color: rgba(255,255,255,.17); pointer-events: none; }
+.final::before { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: clamp(9rem, 26vw, 19rem); aspect-ratio: 432 / 552; background-color: rgba(255,255,255,.2); -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; pointer-events: none; }
 .final__inner { position: relative; }
 .final__title { font-family: var(--serif); font-weight: 500; font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: 1.05; color: var(--cocoa); margin-bottom: 38px; }
 .final__title em { color: var(--white); }

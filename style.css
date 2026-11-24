@@ -476,7 +476,10 @@ body.is-ready .hero__card { opacity: 1; }
 }
 .bform__progress { height: 3px; background: rgba(255,255,255,.1); border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
 .bform__progress span { display: block; height: 100%; width: 33.33%; background: linear-gradient(90deg, var(--gold-2), var(--gold)); border-radius: 3px; transition: width .7s var(--ease); }
-.bstep { border: 0; display: none; }
+/* min-width: 0 impede que a fileira de dias (que rola para o lado) estique o passo
+   e empurre os horários e o botão "Continuar" para fora da caixa */
+.booking__grid > * { min-width: 0; }
+.bstep { border: 0; display: none; min-width: 0; max-width: 100%; }
 .bstep.is-active { display: block; animation: stepIn .7s var(--ease); }
 @keyframes stepIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: none; } }
 .bstep.is-back { animation-name: stepBack; }
@@ -496,7 +499,7 @@ body.is-ready .hero__card { opacity: 1; }
 .chip:disabled { opacity: .3; cursor: not-allowed; text-decoration: line-through; }
 .chips--time .chip { min-width: 78px; justify-content: center; text-align: center; }
 
-.days { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: rgba(231,188,145,.4) transparent; -webkit-overflow-scrolling: touch; }
+.days { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0 8px; max-width: 100%; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: rgba(231,188,145,.4) transparent; -webkit-overflow-scrolling: touch; }
 .day {
     flex: none; scroll-snap-align: start; width: 72px; padding: 14px 0; border-radius: 18px;
     border: 1px solid rgba(255,237,215,.18); text-align: center;
@@ -630,24 +633,43 @@ body.is-ready .hero__card { opacity: 1; }
 }
 
 @media (max-width: 600px) {
-    .container { width: calc(100% - 40px); }
+    /* Tudo que usa "rem" acompanha a largura do celular:
+       390px de largura = 16px; celulares menores reduzem na mesma proporção */
+    html { font-size: clamp(13px, 4.1vw, 16px); }
+    .container { width: calc(100% - 32px); }
+    .section { padding: clamp(64px, 18vw, 90px) 0; }
+    .section__head { margin-bottom: 32px; }
     .hero__title { font-size: clamp(2.9rem, 13vw, 4rem); }
     .hero__actions .btn { flex: 1 1 100%; }
     .hero__meta strong { font-size: 1.45rem; }
     .hero__card strong { font-size: .8rem; }
     .hero__card small { font-size: .72rem; }
 
-    .services__grid { grid-template-columns: 1fr; gap: 14px; }
-    .service { padding: 28px 24px 24px; }
+    /* Cards de serviço: 2 por linha, mais compactos */
+    .services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .service { padding: 1.1rem .95rem .95rem; border-radius: 18px; }
+    .service__num { top: .8rem; right: .9rem; font-size: .8rem; }
+    .service__icon { width: 2.9rem; height: 2.9rem; margin-bottom: .8rem; }
+    .service__icon svg { width: 2rem; height: 2rem; }
+    .service h3 { font-size: 1.2rem; margin-bottom: .35rem; }
+    .service p { font-size: .8rem; line-height: 1.45; margin-bottom: .8rem; }
+    .service__foot { flex-direction: column; align-items: flex-start; gap: 2px; padding-top: .6rem; }
+    .service__price { font-size: .72rem; }
+    .service__btn { font-size: .8rem; padding: 2px 0; }
 
     .gallery__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; gap: 12px; }
     .g-item--wide { grid-column: span 2; }
     .g-item figcaption { transform: none; font-size: .75rem; padding: 7px 12px; left: 10px; right: auto; bottom: 10px; }
     .section__head--row { flex-direction: column; align-items: flex-start; }
 
-    .bform { padding: 24px 20px; min-height: 0; }
+    .bform { padding: 22px 16px; min-height: 0; border-radius: 22px; }
     .bstep legend { font-size: 1.45rem; }
-    .chip { padding: 11px 15px; font-size: .86rem; }
+    .chip { padding: .65rem .9rem; font-size: .86rem; }
+    .chips { gap: 8px; }
+    .chips--time { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.6rem, 1fr)); }
+    .chips--time .chip { min-width: 0; padding-inline: 0; }
+    .day { width: 3.9rem; padding: .7rem 0; border-radius: 14px; }
+    .day strong { font-size: 1.4rem; }
     .bform__actions .btn--gold { flex: 1; padding: 15px 18px; font-size: .88rem; }
 
     .lightbox { grid-template-columns: 1fr; padding: 70px 16px 90px; }

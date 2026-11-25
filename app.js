@@ -177,7 +177,11 @@ window.RC = { ativo: false };
                 err.textContent = msg;
                 return;
             }
-            if (data?.motivo === 'email-desativado') { pedirAjudaAoStudio(contato); return; }
+            if (data?.motivo === 'email-desativado' || data?.motivo === 'email-falhou') {
+                err.textContent = 'Não conseguimos enviar o e-mail agora. Vamos te levar ao WhatsApp do studio para ajudar.';
+                setTimeout(() => pedirAjudaAoStudio(contato), 1200);
+                return;
+            }
             okMsg.textContent = `${data.mensagem} Confira também a caixa de spam.`;
         });
 

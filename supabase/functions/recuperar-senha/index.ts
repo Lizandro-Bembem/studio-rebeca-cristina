@@ -44,8 +44,12 @@ servir(async req => {
     <p style="margin:24px 0 0;font-size:12px;line-height:1.6;color:#8A6A4C">O link vale por 1 hora e só pode ser usado uma vez.<br>Se não foi você que pediu, é só ignorar este e-mail — sua senha continua a mesma.</p>
   </div>
 </div>`;
-    const enviado = await enviarEmail(perfil.email, perfil.nome, 'Criar senha nova — Studio Rebeca Cristina', html);
-    if (!enviado) throw new Erro(502, 'Não conseguimos enviar o e-mail agora. Tente de novo em alguns minutos.');
+    const enviado = await enviarEmail(perfil.email, perfil.nome, 'Criar senha nova — Studio Rebeca Cristina', html).catch(() => false);
+    // Se o e-mail falhar (ex.: chave do Brevo vencida), a cliente é levada ao WhatsApp do studio
+    if (!enviado) {
+        await db.from('perfis').update({ recuperacao_em: null }).eq('id', perfil.id);
+        return json({ ok: false, motivo: 'email-falhou' });
+    }
 
     return json(resposta);
 });

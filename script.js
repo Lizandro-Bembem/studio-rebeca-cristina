@@ -376,7 +376,8 @@ function renderTimes() {
             const [hh, mm] = h.split(':').map(Number);
             const slot = new Date(state.dia);
             slot.setHours(hh, mm);
-            b.disabled = slot < now;
+            // horário passado ou já ocupado (agenda online, ver app.js)
+            b.disabled = slot < now || window.RC_OCUPADOS?.has(`${ymd(state.dia)} ${h}`) === true;
         }
         if (state.hora === h && !b.disabled) b.classList.add('is-selected');
         b.addEventListener('click', () => {
@@ -413,7 +414,8 @@ function showError(n) {
 function validate(n) {
     if (n === 1) return state.servicos.size > 0;
     if (n === 2) return !!state.dia && !!state.hora;
-    if (n === 3) return $('#bName').value.trim().length > 1;
+    // com a agenda online, o nome vem da conta da cliente
+    if (n === 3) return window.RC?.ativo ? true : $('#bName').value.trim().length > 1;
     return true;
 }
 $$('[data-next]', form).forEach(b => b.addEventListener('click', () => {
@@ -432,9 +434,31 @@ function renderSummary() {
     <div><b>Horário:</b> ${state.hora}</div>`;
 }
 
+function ymd(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function mostrarConcluido() {
+    steps.forEach(s => s.classList.remove('is-active'));
+    $('#bdone').classList.add('is-active');
+    bar.style.width = '100%';
+}
+// Ganchos usados pela agenda online (app.js)
+window.RCsite = { state, renderTimes, goTo, mostrarConcluido, ymd, dataFormatada };
+
 form.addEventListener('submit', e => {
     e.preventDefault();
     if (!validate(3)) return showError(3);
+
+    // Agenda online ativa: envia o pedido para o studio (login + notificação para a Rebeca)
+    if (window.RC?.ativo) {
+        window.RC.enviarPedido({
+            servicos: [...state.servicos],
+            data: ymd(state.dia),
+            hora: state.hora,
+            observacao: $('#bNote').value.trim(),
+        });
+        return;
+    }
 
     const nome = $('#bName').value.trim();
     const obs = $('#bNote').value.trim();
@@ -447,10 +471,7 @@ form.addEventListener('submit', e => {
     msg += `\nEsse horário está disponível?`;
 
     window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-
-    steps.forEach(s => s.classList.remove('is-active'));
-    $('#bdone').classList.add('is-active');
-    bar.style.width = '100%';
+    mostrarConcluido();
 });
 
 $('#bRestart').addEventListener('click', () => {

@@ -3,15 +3,19 @@
    Ao mudar arquivos do site, aumente a versão abaixo para
    que o app instalado receba a atualização na hora.
    ========================================================= */
-const VERSION = 'rc-v1';
+const VERSION = 'rc-v2';
 const CACHE = `studio-rebeca-${VERSION}`;
 
 // Arquivos essenciais (salvos na instalação)
 const CORE = [
     './',
     './index.html',
+    './admin.html',
     './style.css',
     './script.js',
+    './config.js',
+    './app.js',
+    './admin.js',
     './favicon.svg',
     './manifest.webmanifest',
     './icons/icon-192.png',
@@ -53,15 +57,15 @@ self.addEventListener('fetch', event => {
 
     // Páginas: busca na internet primeiro (sempre a versão mais nova); sem internet, usa a cópia salva
     if (req.mode === 'navigate') {
+        const pagina = url.pathname.endsWith('/admin.html') ? './admin.html' : './index.html';
         event.respondWith((async () => {
             try {
                 const preload = await event.preloadResponse;
                 const res = preload || await fetch(req);
-                const cache = await caches.open(CACHE);
-                cache.put('./index.html', res.clone());
+                if (res.ok) (await caches.open(CACHE)).put(pagina, res.clone());
                 return res;
             } catch {
-                return (await caches.match('./index.html')) || (await caches.match('./')) || Response.error();
+                return (await caches.match(pagina)) || (await caches.match('./')) || Response.error();
             }
         })());
         return;
@@ -119,3 +123,43 @@ async function staleWhileRevalidate(req) {
     }).catch(() => hit);
     return hit || update;
 }
+
+/* ---------------------------------------------------------
+   Notificações de novos agendamentos (para a Rebeca)
+   --------------------------------------------------------- */
+self.addEventListener('push', event => {
+    let dados = {};
+    try { dados = event.data ? event.data.json() : {}; } catch { dados = { body: event.data && event.data.text() }; }
+    const titulo = dados.title || 'Novo agendamento ✨';
+    event.waitUntil((async () => {
+        await self.registration.showNotification(titulo, {
+            body: dados.body || 'Você recebeu um novo pedido de agendamento.',
+            icon: './icons/icon-192.png',
+            badge: './icons/favicon-32.png',
+            tag: dados.id ? `pedido-${dados.id}` : 'pedido',
+            renotify: true,
+            requireInteraction: true,
+            data: { url: dados.url || './admin.html' },
+        });
+        // número no ícone do app (iPhone e Android)
+        if (self.navigator && 'setAppBadge' in self.navigator) {
+            try { await self.navigator.setAppBadge(); } catch {}
+        }
+    })());
+});
+
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+    const destino = new URL(event.notification.data?.url || './admin.html', self.registration.scope).href;
+    event.waitUntil((async () => {
+        const abertas = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        // reaproveita o app se já estiver aberto
+        for (const c of abertas) {
+            if (c.url.startsWith(self.registration.scope)) {
+                await c.focus();
+                if ('navigate' in c) return c.navigate(destino);
+            }
+        }
+        return self.clients.openWindow(destino);
+    })());
+});

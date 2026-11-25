@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>Agendamentos | Studio Rebeca Cristina</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#FFEDD7">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Rebeca Cristina">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="adm">
+
+<header class="adm__bar">
+    <a href="./" class="logo" aria-label="Voltar ao site">
+        <span class="logo__mono"><span class="mark"></span></span>
+        <span class="logo__text">Studio<strong>Agendamentos</strong></span>
+    </a>
+    <button type="button" class="adm__sair" id="admSair" hidden>Sair</button>
+</header>
+
+<main class="adm__main">
+    <!-- Agenda online ainda não configurada -->
+    <section class="adm__card" id="admOff" hidden>
+        <h2>Agenda online desligada</h2>
+        <p>As chaves do servidor ainda não foram colocadas no arquivo <code>config.js</code>.</p>
+    </section>
+
+    <!-- Login -->
+    <section class="adm__card" id="admLogin" hidden>
+        <img class="isheet__icon" src="icons/icon-192.png" alt="" width="64" height="64">
+        <h2>Entrar no painel</h2>
+        <p class="adm__muted">Use o WhatsApp e a senha da conta do studio.</p>
+        <form class="auth__form" id="admFormLogin" novalidate>
+            <label class="afield"><span>WhatsApp</span><input type="tel" name="telefone" inputmode="tel" autocomplete="tel-national" placeholder="(71) 99999-9999"></label>
+            <label class="afield"><span>Senha</span><input type="password" name="senha" autocomplete="current-password" placeholder="Sua senha"></label>
+            <p class="aerr" role="alert"></p>
+            <button type="submit" class="btn btn--dark">Entrar</button>
+        </form>
+    </section>
+
+    <!-- Conta sem acesso -->
+    <section class="adm__card" id="admNegado" hidden>
+        <h2>Acesso só para o studio</h2>
+        <p class="adm__muted">Essa conta é de cliente. Entre com a conta do Studio Rebeca Cristina.</p>
+        <button type="button" class="btn btn--dark" data-sair>Sair e trocar de conta</button>
+    </section>
+
+    <!-- Painel -->
+    <section id="admPainel" hidden>
+        <div class="adm__notif" id="admNotif">
+            <div class="adm__notif-ico" aria-hidden="true">🔔</div>
+            <div class="adm__notif-txt"><strong id="notifTitulo">Notificações</strong><small id="notifTexto"></small></div>
+            <button type="button" class="btn btn--dark btn--sm" id="notifBtn" hidden>Ativar</button>
+        </div>
+
+        <div class="adm__tabs" role="tablist">
+            <button type="button" class="adm__tab is-active" data-tab="pendentes">Pedidos <b id="contPendentes">0</b></button>
+            <button type="button" class="adm__tab" data-tab="agenda">Agenda</button>
+            <button type="button" class="adm__tab" data-tab="historico">Histórico</button>
+        </div>
+
+        <div class="adm__painel" data-painel-tab="pendentes"><ul class="adm__lista" id="listaPendentes"></ul></div>
+        <div class="adm__painel" data-painel-tab="agenda" hidden><div id="listaAgenda"></div></div>
+        <div class="adm__painel" data-painel-tab="historico" hidden><ul class="adm__lista" id="listaHistorico"></ul></div>
+
+        <div class="adm__tools">
+            <button type="button" class="btn btn--dark" id="btnNovo">+ Novo agendamento</button>
+            <button type="button" class="auth__link" id="btnSenha">Criar senha nova para uma cliente</button>
+        </div>
+    </section>
+</main>
+
+<!-- ============ PEDIDO: Adicionar agendamento? ============ -->
+<div class="isheet" id="pedidoModal" aria-hidden="true" role="dialog" aria-labelledby="pedidoTitulo">
+    <div class="isheet__panel pedido">
+        <button type="button" class="isheet__close" data-isheet-close aria-label="Fechar">×</button>
+        <h3 id="pedidoTitulo">Adicionar Agendamento?</h3>
+        <dl class="pedido__info" id="pedidoInfo"></dl>
+
+        <div class="pedido__conflito" id="pedidoConflito" hidden>
+            <strong>⚠️ Já existe um agendamento nesse horário</strong>
+            <p id="pedidoConflitoTxt"></p>
+            <button type="button" class="btn btn--dark" id="pedidoRecusarConflito">Recusar e oferecer outros horários</button>
+        </div>
+
+        <p class="aerr" id="pedidoErro" role="alert"></p>
+        <div class="pedido__acoes" id="pedidoAcoes">
+            <button type="button" class="btn pedido__recusar" id="pedidoRecusar">Recusar</button>
+            <button type="button" class="btn btn--dark pedido__adicionar" id="pedidoAdicionar">Adicionar</button>
+        </div>
+        <p class="pedido__status" id="pedidoStatus" hidden></p>
+    </div>
+</div>
+
+<!-- ============ NOVO AGENDAMENTO MANUAL ============ -->
+<div class="isheet" id="novoModal" aria-hidden="true" role="dialog" aria-label="Novo agendamento">
+    <div class="isheet__panel">
+        <button type="button" class="isheet__close" data-isheet-close aria-label="Fechar">×</button>
+        <h3>Novo agendamento</h3>
+        <p class="isheet__sub">Para clientes que marcaram por fora (pessoalmente, ligação...).</p>
+        <form class="auth__form" id="formNovo" novalidate>
+            <label class="afield"><span>Nome da cliente</span><input type="text" name="nome" placeholder="Nome"></label>
+            <label class="afield"><span>WhatsApp (opcional)</span><input type="tel" name="telefone" inputmode="tel" placeholder="(71) 99999-9999"></label>
+            <label class="afield"><span>Serviço</span><select name="servico" id="novoServico"></select></label>
+            <div class="afield-row">
+                <label class="afield"><span>Dia</span><input type="date" name="data"></label>
+                <label class="afield"><span>Horário</span><select name="hora" id="novoHora"></select></label>
+            </div>
+            <p class="aerr" role="alert"></p>
+            <button type="submit" class="btn btn--dark">Adicionar à agenda</button>
+        </form>
+    </div>
+</div>
+
+<!-- ============ REDEFINIR SENHA ============ -->
+<div class="isheet" id="senhaModal" aria-hidden="true" role="dialog" aria-label="Criar senha nova">
+    <div class="isheet__panel">
+        <button type="button" class="isheet__close" data-isheet-close aria-label="Fechar">×</button>
+        <h3>Senha nova para cliente</h3>
+        <p class="isheet__sub">Quando uma cliente esquecer a senha, crie uma nova aqui e envie para ela.</p>
+        <form class="auth__form" id="formSenha" novalidate>
+            <label class="afield"><span>WhatsApp da cliente</span><input type="tel" name="telefone" inputmode="tel" placeholder="(71) 99999-9999"></label>
+            <label class="afield"><span>Senha nova</span><input type="text" name="senha" placeholder="Mínimo 6 caracteres" autocomplete="off"></label>
+            <p class="aerr" role="alert"></p>
+            <button type="submit" class="btn btn--dark">Salvar senha nova</button>
+        </form>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

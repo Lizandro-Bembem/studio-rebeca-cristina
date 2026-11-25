@@ -70,7 +70,14 @@
             <a href="#contato" class="nav__link">Contato</a>
         </nav>
 
-        <a href="#agendar" class="btn btn--dark btn--sm header__cta magnetic">Agendar</a>
+        <div class="header__tools">
+            <a href="admin.html" class="header__admin" data-admin-link hidden>Agendamentos</a>
+            <button type="button" class="acct" data-conta hidden aria-label="Entrar ou criar conta">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+                <span>Entrar</span>
+            </button>
+            <a href="#agendar" class="btn btn--dark btn--sm header__cta magnetic">Agendar</a>
+        </div>
 
         <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
             <span></span><span></span>
@@ -87,6 +94,7 @@
         <a href="#galeria" class="mmenu__link"><span>04</span>Galeria</a>
         <a href="#agendar" class="mmenu__link"><span>05</span>Agendamento</a>
         <a href="#contato" class="mmenu__link"><span>06</span>Contato</a>
+        <a href="admin.html" class="mmenu__link" data-admin-link hidden><span>✦</span>Agendamentos</a>
     </nav>
     <div class="mmenu__foot">
         <a href="https://wa.me/5571993018287?text=Ol%C3%A1%2C%20quero%20atendimento" target="_blank" rel="noopener">WhatsApp</a>
@@ -379,6 +387,7 @@
                 <!-- Passo 3 -->
                 <fieldset class="bstep" data-step="3">
                     <legend>3. Seus dados</legend>
+                    <div class="bconta" id="bConta" hidden></div>
                     <label class="field"><input type="text" id="bName" placeholder=" " autocomplete="name" required><span>Seu nome</span></label>
                     <label class="field"><textarea id="bNote" placeholder=" " rows="3"></textarea><span>Observação (opcional) — ex.: cor, formato…</span></label>
                     <div class="summary" id="summary"></div>
@@ -492,6 +501,52 @@
     </div>
 </div>
 
+<!-- ============ LOGIN / CADASTRO ============ -->
+<div class="isheet" id="authModal" aria-hidden="true" role="dialog" aria-label="Entrar ou criar conta">
+    <div class="isheet__panel auth">
+        <button type="button" class="isheet__close" data-isheet-close aria-label="Fechar">×</button>
+        <img class="isheet__icon" src="icons/icon-192.png" alt="" width="64" height="64">
+        <div class="auth__tabs" role="tablist">
+            <button type="button" class="auth__tab is-active" data-aba="entrar">Entrar</button>
+            <button type="button" class="auth__tab" data-aba="cadastro">Criar conta</button>
+        </div>
+        <p class="auth__aviso" id="authAviso" hidden></p>
+
+        <form class="auth__form" id="formEntrar" data-painel="entrar" novalidate>
+            <label class="afield"><span>WhatsApp</span><input type="tel" name="telefone" inputmode="tel" autocomplete="tel-national" placeholder="(71) 99999-9999" required></label>
+            <label class="afield"><span>Senha</span><input type="password" name="senha" autocomplete="current-password" placeholder="Sua senha" required></label>
+            <p class="aerr" role="alert"></p>
+            <button type="submit" class="btn btn--dark">Entrar</button>
+            <button type="button" class="auth__link" id="esqueciSenha">Esqueci minha senha</button>
+        </form>
+
+        <form class="auth__form" id="formCadastro" data-painel="cadastro" novalidate hidden>
+            <label class="afield"><span>Nome</span><input type="text" name="nome" autocomplete="name" placeholder="Seu nome" required></label>
+            <label class="afield"><span>WhatsApp</span><input type="tel" name="telefone" inputmode="tel" autocomplete="tel-national" placeholder="(71) 99999-9999" required></label>
+            <label class="afield"><span>Senha</span><input type="password" name="senha" autocomplete="new-password" placeholder="Mínimo 6 caracteres" required></label>
+            <label class="afield"><span>Repita a senha</span><input type="password" name="senha2" autocomplete="new-password" placeholder="Digite de novo" required></label>
+            <p class="aerr" role="alert"></p>
+            <button type="submit" class="btn btn--dark">Criar conta</button>
+            <p class="auth__nota">Seu WhatsApp é usado só para confirmar seus agendamentos.</p>
+        </form>
+    </div>
+</div>
+
+<!-- ============ MINHA CONTA ============ -->
+<div class="isheet" id="contaModal" aria-hidden="true" role="dialog" aria-label="Minha conta">
+    <div class="isheet__panel conta">
+        <button type="button" class="isheet__close" data-isheet-close aria-label="Fechar">×</button>
+        <h3 id="contaNome"></h3>
+        <p class="isheet__sub" id="contaTel"></p>
+        <a href="admin.html" class="btn btn--dark conta__admin" data-admin-link hidden>Abrir agendamentos do studio</a>
+        <h4 class="conta__titulo">Meus agendamentos</h4>
+        <ul class="clista" id="contaLista"></ul>
+        <button type="button" class="auth__link" id="contaSair">Sair da conta</button>
+    </div>
+</div>
+
+<script src="config.js"></script>
 <script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

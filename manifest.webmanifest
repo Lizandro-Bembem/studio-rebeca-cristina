@@ -1,0 +1,30 @@
+{
+  "id": "./",
+  "name": "Studio Rebeca Cristina",
+  "short_name": "Rebeca Cristina",
+  "description": "Manicure, pedicure, esmaltação em gel e alongamento em Salvador. Agende seu horário em poucos cliques.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#3D2A1A",
+  "theme_color": "#FFEDD7",
+  "categories": ["beauty", "lifestyle", "health"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "icons/screenshot-mobile.png", "sizes": "540x1170", "type": "image/png", "form_factor": "narrow", "label": "Agende seu horário pelo celular" },
+    { "src": "icons/screenshot-desktop.png", "sizes": "1280x800", "type": "image/png", "form_factor": "wide", "label": "Studio Rebeca Cristina" }
+  ],
+  "shortcuts": [
+    { "name": "Agendar horário", "short_name": "Agendar", "url": "./#agendar", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Ver galeria", "short_name": "Galeria", "url": "./#galeria", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ]
+}

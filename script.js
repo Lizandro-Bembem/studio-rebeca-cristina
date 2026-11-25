@@ -475,3 +475,67 @@ $$('.service').forEach(card => {
 
 /* Ano no rodapé */
 $('#year').textContent = new Date().getFullYear();
+
+/* ---------------------------------------------------------
+   App instalável (PWA)
+   --------------------------------------------------------- */
+// Service worker: deixa o app instalável e funcionando sem internet
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+}
+
+(function installApp() {
+    const ua = navigator.userAgent;
+    const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    const installBtns = $$('[data-install]');
+    const sheet = $('#installSheet');
+    let deferredPrompt = null;
+
+    const showButtons = show => installBtns.forEach(b => { b.hidden = !show; });
+
+    // Já está aberto como app: não mostra o botão
+    if (isStandalone) return;
+
+    // Android, Windows, Mac, Linux e ChromeOS (Chrome, Edge, Samsung Internet, Opera...)
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showButtons(true);
+    });
+    window.addEventListener('appinstalled', () => {
+        deferredPrompt = null;
+        showButtons(false);
+        closeSheet();
+    });
+
+    // iPhone/iPad não têm botão automático: mostramos o passo a passo
+    if (isIOS) showButtons(true);
+
+    function openSheet() {
+        $$('.isheet__steps', sheet).forEach(ol => { ol.hidden = ol.dataset.os !== (isIOS ? 'ios' : 'other'); });
+        sheet.classList.add('is-open');
+        sheet.setAttribute('aria-hidden', 'false');
+    }
+    function closeSheet() {
+        sheet.classList.remove('is-open');
+        sheet.setAttribute('aria-hidden', 'true');
+    }
+
+    installBtns.forEach(btn => btn.addEventListener('click', async () => {
+        if (document.body.classList.contains('menu-open')) toggleMenu(false);
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            if (outcome === 'accepted') showButtons(false);
+        } else {
+            openSheet();
+        }
+    }));
+    $$('[data-isheet-close]', sheet).forEach(b => b.addEventListener('click', closeSheet));
+    sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+})();

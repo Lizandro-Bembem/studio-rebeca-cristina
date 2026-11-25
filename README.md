@@ -26,3 +26,12 @@ Enquanto uma foto não existir, aparece um degradê com o monograma "RC" no luga
 ## Como editar
 - **Preços:** em `index.html`, troque "Consulte o valor" pelo preço (ex.: `R$ 35,00`).
 - **Horários, dias fechados, serviços e WhatsApp:** no topo de `script.js` (objeto `CONFIG`).
+
+## App instalável (PWA)
+O site pode ser instalado como aplicativo (Android, iPhone/iPad, Windows, Mac, Linux e ChromeOS).
+- `manifest.webmanifest` → nome, cores e ícones do app
+- `sw.js` → deixa o app rápido e funcionando sem internet
+- `icons/` → ícones (logo RN) e imagens da tela de instalação
+
+**Importante:** ao trocar fotos ou arquivos do site, aumente a versão no topo do `sw.js`
+(ex.: `rc-v1` → `rc-v2`) para que quem já instalou o app receba a atualização.

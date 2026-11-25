@@ -523,11 +523,38 @@
         <form class="auth__form" id="formCadastro" data-painel="cadastro" novalidate hidden>
             <label class="afield"><span>Nome</span><input type="text" name="nome" autocomplete="name" placeholder="Seu nome" required></label>
             <label class="afield"><span>WhatsApp</span><input type="tel" name="telefone" inputmode="tel" autocomplete="tel-national" placeholder="(71) 99999-9999" required></label>
+            <label class="afield"><span>E-mail</span><input type="email" name="email" inputmode="email" autocomplete="email" autocapitalize="off" placeholder="seuemail@gmail.com" required></label>
             <label class="afield"><span>Senha</span><input type="password" name="senha" autocomplete="new-password" placeholder="Mínimo 6 caracteres" required></label>
             <label class="afield"><span>Repita a senha</span><input type="password" name="senha2" autocomplete="new-password" placeholder="Digite de novo" required></label>
             <p class="aerr" role="alert"></p>
             <button type="submit" class="btn btn--dark">Criar conta</button>
-            <p class="auth__nota">Seu WhatsApp é usado só para confirmar seus agendamentos.</p>
+            <p class="auth__nota">Seu WhatsApp é usado para confirmar seus agendamentos e o e-mail, só se você esquecer a senha.</p>
+        </form>
+
+        <form class="auth__form" id="formRecuperar" data-painel="recuperar" novalidate hidden>
+            <h3 class="auth__titulo">Esqueceu a senha?</h3>
+            <p class="auth__nota">Digite o e-mail ou o WhatsApp da sua conta. Vamos enviar um link para você criar uma senha nova.</p>
+            <label class="afield"><span>E-mail ou WhatsApp</span><input type="text" name="contato" autocomplete="email" autocapitalize="off" placeholder="seuemail@gmail.com"></label>
+            <p class="aerr" role="alert"></p>
+            <p class="aok" role="status"></p>
+            <button type="submit" class="btn btn--dark">Enviar link</button>
+            <button type="button" class="auth__link" data-aba="entrar">Voltar para o login</button>
+        </form>
+    </div>
+</div>
+
+<!-- ============ CRIAR SENHA NOVA (link do e-mail) ============ -->
+<div class="isheet" id="novaSenhaModal" aria-hidden="true" role="dialog" aria-label="Criar senha nova">
+    <div class="isheet__panel">
+        <button type="button" class="isheet__close" data-isheet-close aria-label="Fechar">×</button>
+        <img class="isheet__icon" src="icons/icon-192.png" alt="" width="64" height="64">
+        <h3>Criar senha nova</h3>
+        <p class="isheet__sub">Escolha uma senha nova para a sua conta.</p>
+        <form class="auth__form" id="formNovaSenha" novalidate>
+            <label class="afield"><span>Senha nova</span><input type="password" name="senha" autocomplete="new-password" placeholder="Mínimo 6 caracteres"></label>
+            <label class="afield"><span>Repita a senha</span><input type="password" name="senha2" autocomplete="new-password" placeholder="Digite de novo"></label>
+            <p class="aerr" role="alert"></p>
+            <button type="submit" class="btn btn--dark">Salvar senha nova</button>
         </form>
     </div>
 </div>

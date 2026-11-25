@@ -164,6 +164,35 @@ export async function enviarWhatsApp(telefone: string, modelo: string, parametro
 export const linkWhatsApp = (telefone: string, texto: string) =>
     `https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`;
 
+// ---------- E-mail (Brevo — grátis até 300 e-mails/dia) ----------
+const BREVO_KEY = Deno.env.get('BREVO_API_KEY');
+const EMAIL_REMETENTE = Deno.env.get('EMAIL_REMETENTE');
+export const emailAtivo = () => Boolean(BREVO_KEY && EMAIL_REMETENTE);
+
+export function emailValido(v: string) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) && v.length <= 120;
+}
+export function mascararEmail(email: string) {
+    const [u, d] = email.split('@');
+    return `${u.slice(0, 2)}${'•'.repeat(Math.max(1, u.length - 2))}@${d}`;
+}
+
+export async function enviarEmail(para: string, nome: string, assunto: string, html: string): Promise<boolean> {
+    if (!emailAtivo()) return false;
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': BREVO_KEY!, 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+            sender: { name: STUDIO.nome, email: EMAIL_REMETENTE },
+            to: [{ email: para, name: nome }],
+            subject: assunto,
+            htmlContent: html,
+        }),
+    });
+    if (!res.ok) { console.error('E-mail falhou', res.status, await res.text()); return false; }
+    return true;
+}
+
 // ---------- Notificações (Web Push) ----------
 const VAPID_PUBLIC = Deno.env.get('VAPID_PUBLIC_KEY');
 const VAPID_PRIVATE = Deno.env.get('VAPID_PRIVATE_KEY');

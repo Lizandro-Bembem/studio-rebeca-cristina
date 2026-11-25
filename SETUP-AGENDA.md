@@ -21,7 +21,7 @@ confirmação pronta e ela só aperta enviar. Quando a API for ativada, a mensag
 | `admin.html` / `admin.js` | Página **Agendamentos** da Rebeca |
 | `sw.js` | App offline + notificações |
 | `supabase/migrations/` | Tabelas e regras de segurança |
-| `supabase/functions/` | Funções do servidor: `cadastro`, `agendar`, `decidir`, `redefinir-senha` |
+| `supabase/functions/` | Funções do servidor: `cadastro`, `agendar`, `decidir`, `recuperar-senha`, `redefinir-senha` |
 
 ## Segredos do servidor (Supabase → Edge Functions → Secrets)
 | Nome | Valor |
@@ -30,6 +30,8 @@ confirmação pronta e ela só aperta enviar. Quando a API for ativada, a mensag
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Chaves das notificações |
 | `WHATSAPP_TOKEN` | Token permanente da API do WhatsApp (Meta) |
 | `WHATSAPP_PHONE_ID` | ID do número na API do WhatsApp (Meta) |
+| `BREVO_API_KEY` | Chave da API do Brevo (e-mails de "Esqueci minha senha") |
+| `EMAIL_REMETENTE` | E-mail remetente verificado no Brevo |
 
 ## Modelos de mensagem para criar na Meta (categoria: Utilidade, idioma: Português (BR))
 

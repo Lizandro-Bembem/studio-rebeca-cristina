@@ -46,6 +46,26 @@
         if (d.length > 7) v = `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
         input.value = v;
     }));
+    // botão de "olho" (mostrar/ocultar senha)
+    $$('input[type="password"]').forEach(input => {
+        const caixa = document.createElement('div');
+        caixa.className = 'afield__senha';
+        input.replaceWith(caixa);
+        const olho = document.createElement('button');
+        olho.type = 'button';
+        olho.className = 'afield__olho';
+        olho.setAttribute('aria-label', 'Mostrar senha');
+        olho.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="risco" d="M3 3l18 18"/></svg>';
+        olho.addEventListener('click', e => {
+            e.preventDefault();
+            const mostrar = input.type === 'password';
+            input.type = mostrar ? 'text' : 'password';
+            olho.classList.toggle('is-on', mostrar);
+            olho.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+            input.focus();
+        });
+        caixa.append(input, olho);
+    });
     let toastT;
     function toast(txt, ms = 4500) {
         const t = $('#toast'); t.textContent = txt; t.classList.add('is-show');

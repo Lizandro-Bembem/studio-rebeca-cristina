@@ -30,6 +30,29 @@ window.RC = { ativo: false };
             input.value = v;
         });
     }
+    /** Coloca o botão de "olho" (mostrar/ocultar senha) em todos os campos de senha */
+    function olhosDeSenha(raiz) {
+        $$('input[type="password"]', raiz).forEach(input => {
+            if (input.parentElement.classList.contains('afield__senha')) return;
+            const caixa = document.createElement('div');
+            caixa.className = 'afield__senha';
+            input.replaceWith(caixa);
+            const olho = document.createElement('button');
+            olho.type = 'button';
+            olho.className = 'afield__olho';
+            olho.setAttribute('aria-label', 'Mostrar senha');
+            olho.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="risco" d="M3 3l18 18"/></svg>';
+            olho.addEventListener('click', e => {
+                e.preventDefault();
+                const mostrar = input.type === 'password';
+                input.type = mostrar ? 'text' : 'password';
+                olho.classList.toggle('is-on', mostrar);
+                olho.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+                input.focus();
+            });
+            caixa.append(input, olho);
+        });
+    }
     const dataCurta = iso => { const [a, m, d] = iso.split('-'); return `${DIAS_CURTOS[new Date(+a, m - 1, +d).getDay()]}, ${d}/${m}`; };
     const escapar = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -66,14 +89,16 @@ window.RC = { ativo: false };
         });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(authModal); fechar(contaModal); } });
 
-        // abas Entrar / Criar conta
+        // abas Entrar / Criar conta (e a tela "Esqueci minha senha")
         function aba(nome) {
-            $$('[data-aba]', authModal).forEach(b => b.classList.toggle('is-active', b.dataset.aba === nome));
+            $$('.auth__tab', authModal).forEach(b => b.classList.toggle('is-active', b.dataset.aba === nome));
+            $('.auth__tabs', authModal).hidden = nome === 'recuperar';
             $$('[data-painel]', authModal).forEach(p => { p.hidden = p.dataset.painel !== nome; });
-            $$('.aerr', authModal).forEach(e => { e.textContent = ''; });
+            $$('.aerr, .aok', authModal).forEach(e => { e.textContent = ''; });
         }
         $$('[data-aba]', authModal).forEach(b => b.addEventListener('click', () => aba(b.dataset.aba)));
         $$('input[type="tel"]', authModal).forEach(mascaraTelefone);
+        olhosDeSenha(document);
 
         function abrirLogin(abaInicial = 'entrar', aviso = '') {
             aba(abaInicial);
@@ -105,12 +130,14 @@ window.RC = { ativo: false };
             const f = e.currentTarget, err = $('.aerr', f), btn = $('button[type="submit"]', f);
             const nome = f.nome.value.trim();
             const tel = normalizarTelefone(f.telefone.value);
+            const email = f.email.value.trim().toLowerCase();
             if (nome.length < 2) { err.textContent = 'Digite o seu nome.'; return; }
             if (!tel) { err.textContent = 'Digite um WhatsApp válido, com DDD.'; return; }
+            if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Digite um e-mail válido.'; return; }
             if (f.senha.value.length < 6) { err.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; return; }
             if (f.senha.value !== f.senha2.value) { err.textContent = 'As senhas não são iguais.'; return; }
             carregando(btn, true); err.textContent = '';
-            const { data, error } = await sb.functions.invoke('cadastro', { body: { nome, telefone: tel, senha: f.senha.value } });
+            const { data, error } = await sb.functions.invoke('cadastro', { body: { nome, telefone: tel, email, senha: f.senha.value } });
             if (error) {
                 carregando(btn, false);
                 let msg = 'Não foi possível criar a conta. Tente de novo.';
@@ -126,12 +153,69 @@ window.RC = { ativo: false };
             }
         });
 
-        // Esqueci a senha → fala com o studio
-        $('#esqueciSenha').addEventListener('click', () => {
-            const tel = normalizarTelefone($('#formEntrar').telefone.value);
-            const msg = `Olá! Esqueci a senha da minha conta no site do Studio.${tel ? ` Meu WhatsApp cadastrado é ${$('#formEntrar').telefone.value}.` : ''} Pode criar uma senha nova pra mim?`;
+        // ---------------- Esqueci minha senha ----------------
+        function pedirAjudaAoStudio(contato) {
+            const msg = `Olá! Esqueci a senha da minha conta no site do Studio.${contato ? ` Meus dados: ${contato}.` : ''} Pode criar uma senha nova pra mim?`;
             window.open(`https://wa.me/${RC_CONFIG.whatsappStudio}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        $('#esqueciSenha').addEventListener('click', () => {
+            aba('recuperar');
+            $('#formRecuperar').contato.value = $('#formEntrar').telefone.value;
+            setTimeout(() => $('#formRecuperar').contato.focus(), 50);
         });
+        $('#formRecuperar').addEventListener('submit', async e => {
+            e.preventDefault();
+            const f = e.currentTarget, err = $('.aerr', f), okMsg = $('.aok', f), btn = $('button[type="submit"]', f);
+            const contato = f.contato.value.trim();
+            if (!contato) { err.textContent = 'Digite o e-mail ou o WhatsApp da sua conta.'; return; }
+            carregando(btn, true); err.textContent = ''; okMsg.textContent = '';
+            const { data, error } = await sb.functions.invoke('recuperar-senha', { body: { contato } });
+            carregando(btn, false);
+            if (error) {
+                let msg = 'Não foi possível enviar agora. Tente de novo.';
+                try { msg = (await error.context.json()).erro || msg; } catch {}
+                err.textContent = msg;
+                return;
+            }
+            if (data?.motivo === 'email-desativado') { pedirAjudaAoStudio(contato); return; }
+            okMsg.textContent = `${data.mensagem} Confira também a caixa de spam.`;
+        });
+
+        // Link do e-mail: ?recuperar=<código> → criar senha nova
+        const novaSenhaModal = $('#novaSenhaModal');
+        $$('[data-isheet-close]', novaSenhaModal).forEach(b => b.addEventListener('click', () => fechar(novaSenhaModal)));
+        const codigoRecuperacao = new URLSearchParams(location.search).get('recuperar');
+        if (codigoRecuperacao) {
+            history.replaceState(null, '', location.pathname + location.hash);
+            sb.auth.verifyOtp({ token_hash: codigoRecuperacao, type: 'recovery' }).then(({ error }) => {
+                if (error) {
+                    abrirLogin('recuperar');
+                    $('.aerr', $('#formRecuperar')).textContent = 'Esse link expirou ou já foi usado. Peça um link novo abaixo.';
+                    return;
+                }
+                abrir(novaSenhaModal);
+                setTimeout(() => $('#formNovaSenha').senha.focus(), 350);
+            });
+        }
+        $('#formNovaSenha').addEventListener('submit', async e => {
+            e.preventDefault();
+            const f = e.currentTarget, err = $('.aerr', f), btn = $('button[type="submit"]', f);
+            if (f.senha.value.length < 6) { err.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; return; }
+            if (f.senha.value !== f.senha2.value) { err.textContent = 'As senhas não são iguais.'; return; }
+            carregando(btn, true); err.textContent = '';
+            const { error } = await sb.auth.updateUser({ password: f.senha.value });
+            carregando(btn, false);
+            if (error) { err.textContent = /different|same/i.test(error.message) ? 'A senha nova precisa ser diferente da antiga.' : 'Não foi possível salvar. Peça um link novo.'; return; }
+            f.reset();
+            fechar(novaSenhaModal);
+            avisar('Senha nova salva! Você já está conectada. ✨');
+        });
+        function avisar(texto) {
+            let t = $('.toast');
+            if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+            t.textContent = texto; t.classList.add('is-show');
+            setTimeout(() => t.classList.remove('is-show'), 4500);
+        }
 
         // ---------------- Sessão ----------------
         async function atualizarSessao(session) {
@@ -156,9 +240,8 @@ window.RC = { ativo: false };
             if (bNameField) bNameField.hidden = true;
             bConta.hidden = false;
             bConta.innerHTML = perfil
-                ? `<span>Agendando como</span><strong>${escapar(perfil.nome)}</strong><button type="button" class="bconta__sair" data-trocar>Trocar</button>`
+                ? `<span>Agendando como</span><strong>${escapar(perfil.nome)}</strong>`
                 : `<span>Para enviar o pedido</span><strong>Entre ou crie sua conta</strong><button type="button" class="bconta__sair" data-entrar>Entrar</button>`;
-            $('[data-trocar]', bConta)?.addEventListener('click', async () => { await sb.auth.signOut(); abrirLogin(); });
             $('[data-entrar]', bConta)?.addEventListener('click', () => abrirLogin());
 
             if (perfil) {

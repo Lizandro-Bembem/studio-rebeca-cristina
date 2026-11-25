@@ -3,7 +3,7 @@
    Ao mudar arquivos do site, aumente a versão abaixo para
    que o app instalado receba a atualização na hora.
    ========================================================= */
-const VERSION = 'rc-v2';
+const VERSION = 'rc-v3';
 const CACHE = `studio-rebeca-${VERSION}`;
 
 // Arquivos essenciais (salvos na instalação)

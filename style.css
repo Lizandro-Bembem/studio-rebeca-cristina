@@ -867,3 +867,6 @@ body.adm { background: var(--cream-2); min-height: 100vh; }
 .pedido__conflito p { font-size: .9rem; color: #7A520B; margin-bottom: 12px; }
 .pedido__conflito .btn { width: 100%; }
 .pedido__status { color: var(--muted); font-size: .92rem; }
+
+/* título das janelas não encosta no botão de fechar */
+.isheet h3 { padding: 0 34px; }
